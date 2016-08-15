@@ -26,16 +26,19 @@ Expressions sourrounded by `{{ }}` will be parsed as simple json attributes:
 
 ```ruby
 template = '
-     <div class="person">
-        <h5>{{ surname }}</h5>
-        <p>{{ name }}</p>
+  <div id="people-list">
+    <div class="person" hs-repeat="people">
+      <a href="{{ link }}">{{ surname }}</a>
+      <p>{{ name }}</p>
     </div>
+  </div>
 '
 html = '
     <html>
       <body>
+          <div id="people-list">
           <div class="person">
-            <h5>Eastwood</h5>
+            <a href="/clint-eastwood">Eastwood</a>
             <p>Clint</p>
           </div>
       </body>
@@ -46,7 +49,7 @@ html = '
 
 The json result:
 ```
-{:surname=>"Eastwood", :name=>"Clint"}
+{:surname=>"Eastwood", :name=>"Clint", :link=>"/clint-eastwood"}
 ```
 
 ### Iterative data
