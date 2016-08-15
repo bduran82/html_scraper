@@ -43,6 +43,32 @@ class ScraperTest < Minitest::Test
     assert_equal '/clint-eastwood', result[:people].first[:link], 'Node attributes should have been parsed'
   end
 
+  def test_parse_regexp
+    template = '<div id="people-list">
+      <div class="person">
+        <h5>{{ surname }}</h5>
+        <p>{{ name }}</p>
+        <span>{{ birthday/\d+\.\d+\.\d+/ }}</span>
+      </div>
+    </div>
+    '
+
+    html = '
+      <html>
+        <body>
+            <div id="people-list">
+            <div class="person">
+              <h5>Eastwood</h5>
+              <p>Clint</p>
+              <span>Born on 31.05.1930</span>
+            </div>
+        </body>
+      </html>
+   '
+   json = HtmlScraper::Scraper.new(template: template).parse(html)
+   assert_equal '31.05.1930', json[:birthday], 'Attribute regexp should be parsed'
+  end
+
   def test_text_parsing
     template = '
       <table id="list">

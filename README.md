@@ -1,6 +1,6 @@
 # HtmlScraper
 
-HtmlScraper is a ruby gem that transforms the content from a html web page to a json document following a defined html template
+HtmlScraper is a ruby gem that simply parses a html document to a json structure following a template
 
 ## Installation
 
@@ -48,6 +48,7 @@ html = '
 ```
 
 The json result:
+
 ```
 {:surname=>"Eastwood", :name=>"Clint", :link=>"/clint-eastwood"}
 ```
@@ -91,12 +92,49 @@ json = HtmlScraper::Scraper.new(template: template).parse(html)
 
 The json result:
 
-````ruby
+```ruby
 {:people=>
   [{:surname=>"Eastwood", :name=>"Clint"},
    {:surname=>"Woods", :name=>"James"},
    {:surname=>"Kinski", :name=>"Klaus"}]}
 ```
+
+### Expression parsing
+
+Regular expressions can be used within the `{{ }}` expression next to the attribute name (surrounded by //):
+
+```ruby
+  template = '<div id="people-list">
+    <div class="person">
+      <h5>{{ surname }}</h5>
+      <p>{{ name }}</p>
+      <span>{{ birthday/\d+\.\d+\.\d+/ }}</span>
+    </div>
+  </div>
+  '
+
+  html = '
+    <html>
+      <body>
+          <div id="people-list">
+          <div class="person">
+            <h5>Eastwood</h5>
+            <p>Clint</p>
+            <span>Born on 31.05.1930</span>
+          </div>
+      </body>
+    </html>
+ '
+ json = HtmlScraper::Scraper.new(template: template).parse(html)
+```
+
+will result in:
+
+
+```
+{:surname=>"Eastwood", :name=>"Clint", :birthday=>"31.05.1930"}
+```
+
 
 ## Development
 
