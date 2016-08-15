@@ -4,12 +4,16 @@ require 'test_helper'
 class ScraperTest < Minitest::Test
   def test_parse
     template = '
-      <div id="people-list">
-        <div class="person" hs-repeat="people">
-          <h5>{{ surname }}</h5>
-          <p>{{ name }}</p>
-        </div>
-      </div>
+      <html>
+        <body>
+          <div id="people-list">
+            <div class="person" hs-repeat="people">
+              <a href="{{ link }}">{{ surname }}</a>
+              <p>{{ name }}</p>
+            </div>
+          </div>
+        </body>
+      </html>
     '
 
     html = '
@@ -17,15 +21,15 @@ class ScraperTest < Minitest::Test
       <body>
         <div id="people-list">
           <div class="person">
-            <h5>Eastwood</h5>
+            <a href="/clint-eastwood">Eastwood</a>
             <p>Clint</p>
           </div>
           <div class="person">
-            <h5>Woods</h5>
+            <a href="/james-woods">Woods</a>
             <p>James</p>
           </div>
           <div class="person">
-            <h5>Kinski</h5>
+            <a href="/klaus-kinski">Kinski</a>
             <p>Klaus</p>
           </div>
         </div>
@@ -36,6 +40,7 @@ class ScraperTest < Minitest::Test
     assert_equal 3, result[:people].size, 'Iterative patterns should have been parsed'
     assert_equal 'Eastwood', result[:people].first[:surname], 'Array element details should have been parsed'
     assert_equal 'Clint', result[:people].first[:name], 'Array element details should have been parsed'
+    assert_equal '/clint-eastwood', result[:people].first[:link], 'Node attributes should have been parsed'
   end
 
   def test_text_parsing
