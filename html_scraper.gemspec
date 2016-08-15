@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Bernat Duran']
 
   spec.summary       = 'Parses the data contained in a html web page to json using a user-defined'
-  spec.homepage      = 'https://github.com/bduran82/html_scraper.git'
+  spec.homepage      = 'https://github.com/bduran82/html_scraper'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
