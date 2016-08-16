@@ -1,6 +1,6 @@
 # HtmlScraper
 
-HtmlScraper is a ruby gem that simply parses a html document to a json structure following a template
+HtmlScraper is a ruby gem that allows parsing an html document to a json structure following a template
 
 ## Installation
 
@@ -20,9 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-### Simple html parsing
-
-Expressions sourrounded by `{{ }}` will be parsed as simple json attributes:
+Define an html template matching the html document that will be parsed. On the blocks wehre data needs to be extracted define the json attribute sourrounded by `{{ }}` and the data for that block will be assigned in that json attribute:
 
 ```ruby
 template = '
@@ -33,6 +31,7 @@ template = '
     </div>
   </div>
 '
+
 html = '
     <html>
       <body>
@@ -55,7 +54,7 @@ The json result:
 
 ### Iterative data
 
-To parse iterative structures define the attribute `hs-repeat` to the html node containing the iteration:
+To parse iterative structures define the attribute `hs-repeat` to the html node containing the iteration. The value of `hs-repeat` will be the name of the json attribute containing an array of the parsed subelements:
 
 ```ruby
 template = '
@@ -99,9 +98,9 @@ The json result:
    {:surname=>"Kinski", :name=>"Klaus"}]}
 ```
 
-### Expression parsing
+### Regular expressions
 
-Regular expressions can be used within the `{{ }}` expression next to the attribute name (surrounded by //):
+Regular expressions can be used next to the attribute name (surrounded by `//`) to filter the parsed string that will be assigned to the attribute. The attribute value will be the first string matching the regular expression:
 
 ```ruby
   template = '<div id="people-list">
@@ -135,6 +134,70 @@ will result in:
 {:surname=>"Eastwood", :name=>"Clint", :birthday=>"31.05.1930"}
 ```
 
+### Ruby code evaluation
+
+For more complex attribute evaluations, ruby code can be used to manipulate the parsed expression. After the attribute name and `=` a ruby block can follow and the result will be assigned to the corresponding json attriibute. Use the symbol `$` to reference the evaluated expression within the ruby block:
+
+```ruby
+  template = '
+  <div id="people-list">
+    <div class="person">
+      <h5>{{ surname = $.upcase }}</h5>
+  </div>
+  '
+
+  html = '
+    <html>
+      <body>
+          <div id="people-list">
+          <div class="person">
+            <h5>Eastwood</h5>
+            <p>Clint</p>
+            <span>Born on 31.05.1930</span>
+          </div>
+      </body>
+    </html>
+ '
+ json = HtmlScraper::Scraper.new(template: template).parse(html)
+```
+
+will result in:
+
+
+```
+{:surname=>"EASTWOOD" }
+```
+
+Regular expressions and ruby code can be both combined:
+
+```ruby
+  template = '<div id="people-list">
+    <div class="person">
+      <h5>{{ surname/\w{4}/ = $.upcase }}</h5>
+  </div>
+  '
+
+  html = '
+    <html>
+      <body>
+          <div id="people-list">
+          <div class="person">
+            <h5>Eastwood</h5>
+            <p>Clint</p>
+            <span>Born on 31.05.1930</span>
+          </div>
+      </body>
+    </html>
+ '
+ json = HtmlScraper::Scraper.new(template: template).parse(html)
+```
+
+will result in:
+
+
+```
+{:surname=>"EAST" }
+```
 
 ## Development
 

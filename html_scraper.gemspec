@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = HtmlScraper::VERSION
   spec.authors       = ['Bernat Duran']
 
-  spec.summary       = 'Parses the data contained in a html web page to json using a user-defined'
+  spec.summary       = 'Parses an html document to a json structure following a template'
   spec.homepage      = 'https://github.com/bduran82/html_scraper'
   spec.license       = 'MIT'
 
